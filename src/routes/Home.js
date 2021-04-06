@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { dbService } from "fbase";
 
-const Home = () => {
+const Home = ({ userObj }) => {
   const [twett, setTwett] = useState("");
   const [twetts, setTwetts] = useState("");
-  const getTwetts = async () => {
-    const dbTwetts = await dbService.collection("twetts").get();
-    dbTwetts.forEach((document) => {
-      const twettObject = {
-        ...document.data(),
-        id: document.id,
-      };
-      setTwetts((prev) => [twettObject, ...prev]);
-    });
-  };
+
   useEffect(() => {
-    getTwetts();
+    dbService.collection("twetts").onSnapshot((snapshot) => {
+      const twettArray = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTwetts(twettArray);
+    });
   }, []);
 
   const onSubmit = async (event) => {
     event.preventDefault();
     if (twett !== "") {
       await dbService.collection("twetts").add({
-        twett,
+        text: twett,
         createdAt: Date.now(),
+        creatorId: userObj.uid,
       });
       setTwett("");
     }
@@ -50,7 +48,7 @@ const Home = () => {
         {twetts &&
           twetts.map((twett) => (
             <div key={twett.id}>
-              <h4>{twett.twett}</h4>
+              <h4>{twett.text}</h4>
             </div>
           ))}
       </div>
