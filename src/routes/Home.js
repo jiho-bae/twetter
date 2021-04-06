@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { dbService } from "fbase";
+import Twett from "components/Twett";
 
 const Home = ({ userObj }) => {
   const [twett, setTwett] = useState("");
@@ -47,9 +48,11 @@ const Home = ({ userObj }) => {
       <div>
         {twetts &&
           twetts.map((twett) => (
-            <div key={twett.id}>
-              <h4>{twett.text}</h4>
-            </div>
+            <Twett
+              key={twett.id}
+              twettObj={twett}
+              isOwner={twett.creatorId === userObj.uid}
+            />
           ))}
       </div>
     </div>
