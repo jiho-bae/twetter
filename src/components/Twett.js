@@ -1,4 +1,4 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import React, { useState } from "react";
 
 const Twett = ({ twettObj, isOwner }) => {
@@ -9,6 +9,7 @@ const Twett = ({ twettObj, isOwner }) => {
     const ok = global.confirm("Are you sure you want to delete this twett?");
     if (ok) {
       await dbService.doc(`twetts/${twettObj.id}`).delete();
+      await storageService.refFromURL(twettObj.savedFileUrl).delete();
     }
   };
   const toggleEditing = () => setEditing((prev) => !prev);
