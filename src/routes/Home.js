@@ -43,6 +43,7 @@ const Home = ({ userObj }) => {
           placeholder="What's on your mind?"
           maxLength={120}
         />
+        <input type="file" accept="image/*" />
         <input type="submit" value="Twett" />
       </form>
       <div>

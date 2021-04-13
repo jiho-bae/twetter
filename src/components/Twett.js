@@ -1,15 +1,63 @@
-import React from "react";
+import { dbService } from "fbase";
+import React, { useState } from "react";
 
-const Twett = ({ twettObj, isOwner }) => (
-  <div>
-    <h4>{twettObj && twettObj.text}</h4>
-    {isOwner && (
-      <>
-        <button>Delete Twett</button>
-        <button>Edit Twett</button>
-      </>
-    )}
-  </div>
-);
+const Twett = ({ twettObj, isOwner }) => {
+  const [editing, setEditing] = useState(false);
+  const [newTwett, setNewTwett] = useState(twettObj.text);
+
+  const onDeleteClick = async () => {
+    const ok = global.confirm("Are you sure you want to delete this twett?");
+    if (ok) {
+      await dbService.doc(`twetts/${twettObj.id}`).delete();
+    }
+  };
+  const toggleEditing = () => setEditing((prev) => !prev);
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    await dbService.doc(`twetts/${twettObj.id}`).update({
+      text: newTwett,
+    });
+    setEditing(false);
+  };
+  const onChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setNewTwett(value);
+  };
+  return (
+    <div>
+      {editing ? (
+        <>
+          {isOwner && (
+            <>
+              <form onSubmit={onSubmit}>
+                <input
+                  type="text"
+                  placeholder="Edit your twett"
+                  value={newTwett}
+                  required
+                  onChange={onChange}
+                />
+                <input type="submit" value="Update Twett" />
+              </form>
+              <button onClick={toggleEditing}>Cancel</button>
+            </>
+          )}
+        </>
+      ) : (
+        <>
+          <h4>{twettObj && twettObj.text}</h4>
+          {isOwner && (
+            <>
+              <button onClick={onDeleteClick}>Delete Twett</button>
+              <button onClick={toggleEditing}>Edit Twett</button>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
 
 export default Twett;
