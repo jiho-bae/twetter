@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { dbService } from "fbase";
+import { v4 as uuidv4 } from "uuid";
+import { dbService, storageService } from "fbase";
 import Twett from "components/Twett";
 
 const Home = ({ userObj }) => {
   const [twett, setTwett] = useState("");
   const [twetts, setTwetts] = useState("");
-  const [fileUrl, setFileUrl] = useState();
+  const [fileUrl, setFileUrl] = useState("");
 
   useEffect(() => {
     dbService.collection("twetts").onSnapshot((snapshot) => {
@@ -19,13 +20,22 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (event) => {
     event.preventDefault();
+    let savedFileUrl = "";
+    if (fileUrl !== "") {
+      const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
+      const response = await fileRef.putString(fileUrl, "data_url");
+      savedFileUrl = await response.ref.getDownloadURL();
+    }
+    const twettObj = {
+      text: twett,
+      createdAt: Date.now(),
+      creatorId: userObj.uid,
+      savedFileUrl,
+    };
     if (twett !== "") {
-      await dbService.collection("twetts").add({
-        text: twett,
-        createdAt: Date.now(),
-        creatorId: userObj.uid,
-      });
+      await dbService.collection("twetts").add(twettObj);
       setTwett("");
+      setFileUrl("");
     }
   };
   const onChange = (event) => {
@@ -50,7 +60,7 @@ const Home = ({ userObj }) => {
     reader.readAsDataURL(theFile);
   };
 
-  const onClearFileUrlClick = () => setFileUrl(null);
+  const onClearFileUrlClick = () => setFileUrl("");
   return (
     <div>
       <form onSubmit={onSubmit}>

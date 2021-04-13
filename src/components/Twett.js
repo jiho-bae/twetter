@@ -48,6 +48,9 @@ const Twett = ({ twettObj, isOwner }) => {
       ) : (
         <>
           <h4>{twettObj && twettObj.text}</h4>
+          {twettObj.savedFileUrl && (
+            <img src={twettObj.savedFileUrl} width="50px" height="50px" />
+          )}
           {isOwner && (
             <>
               <button onClick={onDeleteClick}>Delete Twett</button>
