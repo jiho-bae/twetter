@@ -1,5 +1,7 @@
 import { dbService, storageService } from "fbase";
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Twett = ({ twettObj, isOwner }) => {
   const [editing, setEditing] = useState(false);
@@ -27,12 +29,12 @@ const Twett = ({ twettObj, isOwner }) => {
     setNewTwett(value);
   };
   return (
-    <div>
+    <div className="twett">
       {editing ? (
         <>
           {isOwner && (
             <>
-              <form onSubmit={onSubmit}>
+              <form onSubmit={onSubmit} className="container twettEdit">
                 <input
                   type="text"
                   placeholder="Edit your twett"
@@ -40,23 +42,27 @@ const Twett = ({ twettObj, isOwner }) => {
                   required
                   onChange={onChange}
                 />
-                <input type="submit" value="Update Twett" />
+                <input type="submit" value="Update Twett" className="formBtn" />
               </form>
-              <button onClick={toggleEditing}>Cancel</button>
+              <span onClick={toggleEditing} className="formBtn cancelBtn">
+                Cancel
+              </span>
             </>
           )}
         </>
       ) : (
         <>
           <h4>{twettObj && twettObj.text}</h4>
-          {twettObj.savedFileUrl && (
-            <img src={twettObj.savedFileUrl} width="50px" height="50px" />
-          )}
+          {twettObj.savedFileUrl && <img src={twettObj.savedFileUrl} />}
           {isOwner && (
-            <>
-              <button onClick={onDeleteClick}>Delete Twett</button>
-              <button onClick={toggleEditing}>Edit Twett</button>
-            </>
+            <div class="twett__actions">
+              <span onClick={onDeleteClick}>
+                <FontAwesomeIcon icon={faTrash} />
+              </span>
+              <span onClick={toggleEditing}>
+                <FontAwesomeIcon icon={faPencilAlt} />
+              </span>
+            </div>
           )}
         </>
       )}

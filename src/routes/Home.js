@@ -17,9 +17,9 @@ const Home = ({ userObj }) => {
   }, []);
 
   return (
-    <div>
+    <div className="container">
       <TwettFactory userObj={userObj} />
-      <div>
+      <div style={{ marginTop: 30 }}>
         {twetts &&
           twetts.map((twett) => (
             <Twett
