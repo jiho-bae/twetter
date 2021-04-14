@@ -7,13 +7,16 @@ const Home = ({ userObj }) => {
   const [twetts, setTwetts] = useState("");
 
   useEffect(() => {
-    dbService.collection("twetts").onSnapshot((snapshot) => {
-      const twettArray = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTwetts(twettArray);
-    });
+    dbService
+      .collection("twetts")
+      .orderBy("createdAt", "desc")
+      .onSnapshot((snapshot) => {
+        const twettArray = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setTwetts(twettArray);
+      });
   }, []);
 
   return (

@@ -9,9 +9,8 @@ const TwettFactory = ({ userObj }) => {
   const [fileUrl, setFileUrl] = useState("");
 
   const onSubmit = async (event) => {
-    if (twett === "") return;
-
     event.preventDefault();
+    if (twett === "") return;
     let savedFileUrl = "";
     if (fileUrl !== "") {
       const fileRef = storageService.ref().child(`${userObj.uid}/${uuidv4()}`);
